@@ -1,0 +1,14 @@
+# O = Object, N = Non-Collision Object
+
+# ------------------------------- HOUSE ------------------------------- #
+# I = Invisible Wall, W = Wall, B = Bed, S = Shelf, F = Fireplace, T = Table
+
+O W 0 0 , 500 25
+O W 0 275 , 210 25
+O W 290 275 , 210 25
+O W 0 25 , 25 250
+O W 475 25 , 25 250
+O F 25 0 , 75 200
+O S 375 225 , 100 50
+O B 405 25 , 70 90
+O T 175 80 , 150 100
