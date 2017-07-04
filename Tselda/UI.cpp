@@ -65,7 +65,7 @@ UI::UI()
 
 
 /*
-* DESTRUCTOR - in here we would clean up after our NPC-object has died
+* DESTRUCTOR - in here we would clean up after our UI-object has died, if needed
 */
 UI::~UI()
 {

@@ -16,7 +16,7 @@ Animation::Animation()
 
 
 /*
-* DESTRUCTOR - in here we would clean up after our hero-object has died
+* DESTRUCTOR - in here we would clean up after our Animation-object has died, if needed
 */
 Animation::~Animation()
 {

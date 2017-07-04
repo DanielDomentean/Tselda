@@ -58,10 +58,10 @@
       <Filter>Source Files\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="RedBlob.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Enemies</Filter>
     </ClCompile>
     <ClCompile Include="Tektite.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Enemies</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,3 +1,9 @@
+/*
+* Hero is one of the key elements of this project.
+*
+* It reacts to player input, controls our main charater and animates him (the "Hero") and is responsible for collision detection
+*/
+
 #include "Hero.h"
 
 

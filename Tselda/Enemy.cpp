@@ -12,7 +12,7 @@ Enemy::Enemy()
 
 
 /*
-* DESTRUCTOR - in here we would clean up after our enemy-object has died
+* DESTRUCTOR - in here we would clean up after our enemy-object has died, if needed
 */
 Enemy::~Enemy()
 {

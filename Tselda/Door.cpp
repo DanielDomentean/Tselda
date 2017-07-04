@@ -15,7 +15,7 @@ Door::Door(sf::Sprite sprite, int destination, sf::Vector2f desinationPosition)
 
 
 /*
-* DESTRUCTOR - in here we would clean up after our hero-object has died
+* DESTRUCTOR - in here we would clean up after our object has died, if needed
 */
 Door::~Door()
 {

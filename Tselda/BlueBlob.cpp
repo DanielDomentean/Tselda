@@ -22,7 +22,7 @@ BlueBlob::BlueBlob(sf::Texture& texture, sf::Vector2f position)
 
 
 /*
-* DESTRUCTOR - in here we would clean up after our enemy-object has died
+* DESTRUCTOR - in here we would clean up after our object has died, if needed
 */
 BlueBlob::~BlueBlob()
 {

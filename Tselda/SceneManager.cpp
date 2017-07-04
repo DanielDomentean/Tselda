@@ -1,9 +1,17 @@
+/*
+* Scene Manager was originally named Level and operates similar to a "Room" in GameMaker.
+* Since the functionality changed a little bit the name was apdated as well to reflect those changes.
+*
+* Next to "Hero", the SceneManager is basically the key element of this project. It loads textures, coordinates, sound files and creates sprites to populate the world with.
+* It also contains the main functions for updating our game every cycle and drawing to the render window.
+*/
+
 #include "SceneManager.h"
 
 
 
 /*
-* CONSTRUCTOR - in here we just call "loadLevel". Having this constructor saves us calling load level after creating a object.
+* CONSTRUCTOR - in here we just set up a few basics and call "loadLevel". Having this constructor saves us calling load level after creating a object.
 */
 SceneManager::SceneManager(int level, sf::Vector2f position)
 {
@@ -23,7 +31,7 @@ SceneManager::SceneManager(int level, sf::Vector2f position)
 
 
 /*
-* DESTRUCTOR - in here we would clean up after our level-object has died
+* DESTRUCTOR - in here we would clean up after our SceneManager has died, if needed
 */
 SceneManager::~SceneManager()
 {
@@ -700,7 +708,7 @@ void SceneManager::loadLevel(int level, sf::Vector2f position)
 
 
 /*
-* UPDATE - this update-function is called every cycle of the game. In fact we use the level update funciton to all the other update funcitons, as all other entities can only exist within "SceneManager".
+* UPDATE - this update-function is called every cycle of the game. In fact we use the SceneManager update funciton to call all the other update funcitons, as all other entities can only exist within "SceneManager".
 */
 void SceneManager::update(float elapsedTime)
 {

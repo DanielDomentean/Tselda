@@ -24,7 +24,7 @@ Objective::Objective()
 
 
 /*
- * DESTRUCTOR - in here we would clean up after our object-object has died
+ * DESTRUCTOR - in here we would clean up after our object has died, if needed
  */
 Objective::~Objective()
 {
