@@ -42,7 +42,7 @@ std::vector<sf::Sprite> SceneManager::getObjects()
 
 
 /*
-* DRAW - draw everything within the level to our RenderWindow. The order of things id very important here, as this basically is our rendering pipeline.
+* DRAW - draw everything within the level to our RenderWindow. The order of things is very important here, as this basically is our rendering pipeline.
 */
 void SceneManager::draw(sf::RenderWindow& window, sf::View& camera)
 {
@@ -96,8 +96,7 @@ void SceneManager::draw(sf::RenderWindow& window, sf::View& camera)
 			ui.draw(window);
 		}
 
-	}
-	else {
+	} else {
 
 		// clear with black
 		window.clear();
