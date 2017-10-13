@@ -160,12 +160,17 @@
     <ClCompile Include="BlueBlob.cpp" />
     <ClCompile Include="Door.cpp" />
     <ClCompile Include="Enemy.cpp" />
+    <ClCompile Include="Globals.cpp" />
     <ClCompile Include="Hero.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="MysteryMan.cpp" />
     <ClCompile Include="Npc.cpp" />
     <ClCompile Include="Objective.cpp" />
+    <ClCompile Include="OldMan.cpp" />
     <ClCompile Include="RedBlob.cpp" />
     <ClCompile Include="SceneManager.cpp" />
+    <ClCompile Include="Shopkeeper.cpp" />
+    <ClCompile Include="Signpost.cpp" />
     <ClCompile Include="Tektite.cpp" />
     <ClCompile Include="UI.cpp" />
   </ItemGroup>
@@ -174,11 +179,16 @@
     <ClInclude Include="BlueBlob.h" />
     <ClInclude Include="Door.h" />
     <ClInclude Include="Enemy.h" />
+    <ClInclude Include="Globals.h" />
     <ClInclude Include="Hero.h" />
+    <ClInclude Include="MysteryMan.h" />
     <ClInclude Include="Npc.h" />
     <ClInclude Include="Objective.h" />
+    <ClInclude Include="OldMan.h" />
     <ClInclude Include="RedBlob.h" />
     <ClInclude Include="SceneManager.h" />
+    <ClInclude Include="Shopkeeper.h" />
+    <ClInclude Include="Signpost.h" />
     <ClInclude Include="Tektite.h" />
     <ClInclude Include="UI.h" />
   </ItemGroup>

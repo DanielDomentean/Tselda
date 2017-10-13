@@ -19,9 +19,16 @@ private:
 
 	sf::Sprite dialogueBox;
 	sf::Texture dialogueBoxTexture;
-	int dialogueBoxWidth = 880;
-	int dialogueBoxHeight = 220;
+	int dialogueBoxWidth = 1200;
+	int dialogueBoxHeight = 300;
 	bool dialogueBoxActive = false;
+
+	bool dialogueOptionsBoxActive = false;
+	std::vector<sf::Text> dialogueOptions;
+
+	sf::Sprite arrow;
+	sf::Texture arrowTexture;
+	unsigned int arrowPosition;
 
 	sf::Text dialogue;
 	sf::Font dialogueFont;
@@ -44,11 +51,19 @@ public:
 	UI();
 	~UI();
 
+	sf::String wrapText(sf::String string, unsigned width);
+
 	void activateHealthbar(bool status);
 	void activateTutorialBox(bool status);
 	void activateDialogueBox(bool status);
+	void activateDialogueOptionsBox(bool status);
+
+	int getArrowPosition();
+	void arrowUp();
+	void arrowDown();
 
 	void setDialogue(std::string dialogue);
+	void setDialogueOptions(std::vector<std::string> dialogueOptions);
 	void setHealth(int hearts);
 
 	void draw(sf::RenderWindow& window);

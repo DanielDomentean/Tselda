@@ -15,7 +15,7 @@ int main()
 
 
 	// initializing the world
-	SceneManager sceneManager(SceneManager::OVERWORLD, sf::Vector2f(1700, 3810));
+	SceneManager sceneManager(SceneManager::OVERWORLD, sf::Vector2f(1700, 3810));		// ORIGINAL
 
 
 	// run the program as long as the window is open

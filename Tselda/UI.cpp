@@ -22,6 +22,11 @@ UI::UI()
 	dialogueBox.setTextureRect(sf::IntRect(0, 0, dialogueBoxWidth, dialogueBoxHeight));
 	dialogueBox.setTexture(dialogueBoxTexture);
 
+	// Arrow
+	if (!arrowTexture.loadFromFile("Resources/Sprites/UI/Arrow.png")) printf("ERROR loading ARROW texture file!");
+	arrow.setTexture(arrowTexture);
+	arrowPosition = 0;
+
 	// Dialogue text
 	if (!dialogueFont.loadFromFile("Resources/Sprites/UI/Fonts/Minecraftia-Regular.ttf")) printf("ERROR loading font file!");
 	dialogue.setFont(dialogueFont);
@@ -74,6 +79,43 @@ UI::~UI()
 
 
 /*
+* WRAP TEXT - wrap the passed string if it is longer than the specified width
+*/
+sf::String UI::wrapText(sf::String string, unsigned width)
+{
+	unsigned currentOffset = 0;
+	bool firstWord = true;
+	std::size_t wordBegining = 0;
+
+	for (std::size_t pos(0); pos < string.getSize(); ++pos) {
+		auto currentChar = string[pos];
+		if (currentChar == '\n') {
+			currentOffset = 0;
+			firstWord = true;
+			continue;
+		}
+		else if (currentChar == ' ') {
+			wordBegining = pos;
+			firstWord = false;
+		}
+
+		auto glyph = dialogueFont.getGlyph(currentChar, 24, false);
+		currentOffset += glyph.advance;
+
+		if (!firstWord && currentOffset > width) {
+			pos = wordBegining;
+			string[pos] = '\n';
+			firstWord = true;
+			currentOffset = 0;
+		}
+	}
+
+	return string;
+}
+
+
+
+/*
 * ACTIVATE HEALTHBAR - set the status of the healthbar
 */
 void UI::activateHealthbar(bool status)
@@ -99,6 +141,57 @@ void UI::activateTutorialBox(bool status)
 void UI::activateDialogueBox(bool status)
 {
 	dialogueBoxActive = status;
+	arrowPosition = 0;
+}
+
+
+
+/*
+* ACTIVATE DIALOGUE OPTIONS BOX - set the status of the dialogue box
+*/
+void UI::activateDialogueOptionsBox(bool status)
+{
+	dialogueOptionsBoxActive = status;
+}
+
+
+
+/*
+* GET ARROW POSITION - return the arrow position
+*/
+int UI::getArrowPosition()
+{
+	return arrowPosition;
+}
+
+
+
+/*
+* ARROW UP - lower the arrow position by one
+*/
+void UI::arrowUp()
+{
+	//arrowPosition--;
+
+	if (arrowPosition == 0)
+		arrowPosition = dialogueOptions.size() - 1;
+	else
+		arrowPosition--;
+}
+
+
+
+/*
+* ARROW DOWN - raise the arrow position by one
+*/
+void UI::arrowDown()
+{
+	//arrowPosition++;
+
+	if (arrowPosition == dialogueOptions.size() - 1)
+		arrowPosition = 0;
+	else
+		arrowPosition++;
 }
 
 
@@ -108,7 +201,29 @@ void UI::activateDialogueBox(bool status)
 */
 void UI::setDialogue(std::string dialogue)
 {
-	this->dialogue.setString(dialogue);
+	this->dialogue.setString(wrapText(dialogue, dialogueBoxWidth - 50));
+}
+
+
+
+/*
+* SET DIALOGUE OPTIONS - pass a vector of string to create out dialogue options
+*/
+void UI::setDialogueOptions(std::vector<std::string> dialogueOptions)
+{
+	this->dialogueOptions.clear();
+
+	for each (std::string dialogueOption in dialogueOptions) {
+		sf::Text text;
+
+		text.setFont(dialogueFont);
+		text.setCharacterSize(24);
+		text.setFillColor(sf::Color::White);
+
+		text.setString(wrapText(dialogueOption, dialogueBoxWidth - 50));
+
+		this->dialogueOptions.push_back(text);
+	}
 }
 
 
@@ -131,11 +246,13 @@ void UI::draw(sf::RenderWindow& window)
 {
 	sf::Vector2f screenCenter = window.getView().getCenter();
 
+	// Healthbar
 	if (healthbarActive) {
 		healthbar.setPosition(screenCenter.x - window.getSize().x / 2 + 30, screenCenter.y - window.getSize().y / 2 + 30);
 		window.draw(healthbar);
 	}
 
+	// Tutorial
 	if (tutorialBoxActive) {
 		window.draw(tutorialBox);
 
@@ -148,17 +265,32 @@ void UI::draw(sf::RenderWindow& window)
 		window.draw(eKeyText);
 	}
 
+	// Dialogue
 	if (dialogueBoxActive) {
 		dialogueBox.setPosition(screenCenter.x - dialogueBoxWidth / 2, screenCenter.y + 50);
 		window.draw(dialogueBox);
 
-		eKey.setPosition(screenCenter.x + dialogueBoxWidth / 2 - 40, dialogueBox.getPosition().y + dialogueBoxHeight - 20);
+		eKey.setPosition(screenCenter.x + dialogueBoxWidth / 2 - 40, dialogueBox.getPosition().y + dialogueBoxHeight - 40);
 		window.draw(eKey);
 
-		dialogue.setPosition(dialogueBox.getPosition().x + 30, dialogueBox.getPosition().y + 40);
+		dialogue.setPosition(dialogueBox.getPosition().x + 30, dialogueBox.getPosition().y + 30);
 		window.draw(dialogue);
 	}
 	else {
 		eKey.setPosition(1445, 3690);
+	}
+
+	// Answers
+	if (dialogueOptionsBoxActive) {
+
+		// the answers
+		for (unsigned int i = 0; i < dialogueOptions.size(); i++) {
+			dialogueOptions[i].setPosition(dialogueBox.getPosition().x + 120, dialogueBox.getPosition().y + 165 + i*50);
+			window.draw(dialogueOptions[i]);
+		}
+
+		// the arrow
+		arrow.setPosition(dialogueBox.getPosition().x + 70, dialogueBox.getPosition().y + 150 + (arrowPosition * 50));
+		window.draw(arrow);
 	}
 }

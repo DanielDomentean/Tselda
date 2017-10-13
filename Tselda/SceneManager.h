@@ -4,12 +4,16 @@
 
 #include "Hero.h"
 #include "Door.h"
-#include "Npc.h"
+#include "OldMan.h"
+#include "MysteryMan.h"
+#include "Shopkeeper.h"
+#include "Signpost.h"
 #include "UI.h"
 #include "BlueBlob.h"
 #include "RedBlob.h"
 #include "Tektite.h"
 #include "Objective.h"
+#include "Globals.h"
 
 #include <fstream>
 #include <sstream>
@@ -28,12 +32,11 @@ private:
 	std::vector<sf::Sprite> environment;
 	std::vector<sf::Sprite> ground;
 	std::vector<Door> doors;
-	std::vector<Npc> npcs;
+	std::vector<Npc*> npcs;
 	std::vector<Enemy> enemies;
 	sf::FloatRect tutorialTrigger;
 
 	std::vector<sf::Texture> environmentTextures;
-	std::vector<sf::Texture> npcTextures;
 	std::vector<sf::Texture> enemyTextures;
 
 	sf::Texture poofTexture;

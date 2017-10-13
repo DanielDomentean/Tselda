@@ -3,6 +3,7 @@
 #include <SFML/Audio.hpp>
 
 #include "Animation.h"
+#include "Globals.h"
 
 
 
@@ -36,4 +37,3 @@ public:
 	void update(float deltaTime, sf::FloatRect heroBoundingBox);
 	void draw(sf::RenderWindow& window);
 };
-

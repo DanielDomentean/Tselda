@@ -31,14 +31,17 @@ private:
 	float speed;
 
 	bool interacting = false;
+	bool choosing = false;
 	bool attacking = false;
 	bool flinching = false;
 	bool dead = false;
 
 	sf::Vector2f flinchDirection;
 
-	bool wasInteractButtonPressed = false;
 	bool wasAttackButtonPressed = false;
+	bool wasInteractButtonPressed = false;
+	bool was_W_Pressed = false;
+	bool was_S_Pressed = false;
 
 	float attackTimer = 0.0f;
 	float iFrames = 0.0f;
@@ -50,11 +53,13 @@ private:
 	sf::Sound sound_getHit;
 	sf::Sound sound_death;
 	sf::Sound sound_interact;
+	sf::Sound sound_dialogueSelect;
 
 	sf::SoundBuffer buffer_swordSwing;
 	sf::SoundBuffer buffer_getHit;
 	sf::SoundBuffer buffer_death;
 	sf::SoundBuffer buffer_interact;
+	sf::SoundBuffer buffer_dialogueSelect;
 
 
 public:
@@ -71,6 +76,6 @@ public:
 	void setDirection(int facing);
 	void setSpeed(float speed);
 
-	void update(float deltaTime, std::vector<sf::Sprite>& environment, std::vector<Npc>& npcs, std::vector<Enemy>& enemies, UI& ui);
+	void update(float deltaTime, std::vector<sf::Sprite>& environment, std::vector<Npc*> npcs, std::vector<Enemy>& enemies, UI& ui);
 	void draw(sf::RenderWindow& window);
 };

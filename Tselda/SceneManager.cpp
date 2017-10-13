@@ -35,6 +35,10 @@ SceneManager::SceneManager(int level, sf::Vector2f position)
 */
 SceneManager::~SceneManager()
 {
+	for each (Npc* npc in npcs)
+	{
+		delete npc;
+	}
 }
 
 
@@ -74,23 +78,23 @@ void SceneManager::draw(sf::RenderWindow& window, sf::View& camera)
 
 			//  npcs
 			for (unsigned int i = 0; i < npcs.size(); i++)
-				npcs[i].draw(window);
+				npcs[i]->draw(window);
 
 			// enemies
 			for (unsigned int i = 0; i < enemies.size(); i++)
 				enemies[i].draw(window);
 
 			// objectives
-			if (!objective_beach.isDone())
+			if (!GLOBAL_objective_beach_done)
 				objective_beach.draw(window);
 
-			if (!objective_mountain.isDone())
+			if (!GLOBAL_objective_mountain_done)
 				objective_mountain.draw(window);
 
-			if (!objective_forest.isDone())
+			if (!GLOBAL_objective_forest_done)
 				objective_forest.draw(window);
 
-			if (objective_beach.isDone() && objective_mountain.isDone() && objective_forest.isDone() && !portal.isDone())
+			if (GLOBAL_objective_beach_done && GLOBAL_objective_mountain_done && GLOBAL_objective_forest_done && !portal.isDone())
 				portal.draw(window);
 
 			// hero
@@ -129,7 +133,6 @@ void SceneManager::loadLevel(int level, sf::Vector2f position)
 	enemies.clear();
 
 	environmentTextures.clear();
-	npcTextures.clear();
 	enemyTextures.clear();
 
 
@@ -273,27 +276,9 @@ void SceneManager::loadLevel(int level, sf::Vector2f position)
 
 
 		// Populate the world with NPCs
-		sf::Texture oldManTexture;
-		if (!oldManTexture.loadFromFile("Resources/Sprites/NPCs/OldMan.png")) printf("ERROR loading OLD MAN texture file!");
-		npcTextures.push_back(oldManTexture);
-
-		sf::Texture signPostTexture;
-		if (!signPostTexture.loadFromFile("Resources/Sprites/NPCs/Signpost.png")) printf("ERROR loading SIGNPOST texture file!");
-		npcTextures.push_back(signPostTexture);
-
-		Npc oldMan(npcTextures[0], sf::Vector2f(4200, 2590), 2);
-		oldMan.addLine(" Greetings, young hero! I am an old man. We are often \n used in these games to provide giudance and wisdom. \n However, today is my day off  -  so bugger off!");
-		oldMan.addLine(" Don't make me get my stick . . .");
-		oldMan.addLine(" Good Godess! You types never leave until you get what \n you want eh? Fine! There are three magical items on \n this Island, that you need to collect. And after that, \n well you'll see. Hee hee hee . . .");
-		oldMan.addLine(" I think I saw one of them washed up on the beach.");
-		oldMan.addLine(" It's dangerous to go alone - take th . . . \n \n Wait, why did I just say that?");
-		oldMan.addLine(" \"It's dangerous to go alone\" - Hmmm, Grandfather used \n to say that a lot. And then he usually handed out fake \n swords. He was a confused old man and all you heroes \n took advantage of that. Pfff!");
-		oldMan.addLine(" Guess I'll just start repeating myself now . . .");
-		npcs.push_back(oldMan);
-
-		Npc signpost(npcTextures[1], sf::Vector2f(2940, 2240), 1);
-		signpost.addLine(" East:  Old Man's House \n \n West:  Lost Woods \n \n South:  Hero's Rest");
-		npcs.push_back(signpost);
+		npcs.push_back(new OldMan(sf::Vector2f(4200, 2590)));		// add the Old Man
+		npcs.push_back(new Shopkeeper(sf::Vector2f(4070, 2590)));	// add the Shopkeeper
+		npcs.push_back(new Signpost(sf::Vector2f(2940, 2240), "\n East: Old Man's House \n\n West: Forbidden Woods \n\n South: Hero's Rest"));	// add a signpost
 
 
 		// Populate the world with enemies
@@ -423,13 +408,13 @@ void SceneManager::loadLevel(int level, sf::Vector2f position)
 
 
 		// put objectives in the world
-		if (!objective_beach.isDone())
+		if (!GLOBAL_objective_beach_done)
 			objective_beach.setPosition(5020, 3530);
 
-		if (!objective_mountain.isDone())
+		if (!GLOBAL_objective_mountain_done)
 			objective_mountain.setPosition(3285, 820);
 
-		if (!objective_forest.isDone())
+		if (!GLOBAL_objective_forest_done)
 			objective_forest.setPosition(230, 4370);
 
 
@@ -647,21 +632,9 @@ void SceneManager::loadLevel(int level, sf::Vector2f position)
 
 
 		// Populate the world with NPCs
-		sf::Texture mysteryManTexture;
-		if (!mysteryManTexture.loadFromFile("Resources/Sprites/NPCs/MysteryMan.png")) printf("ERROR loading MYSTERY MAN texture file!");
-		npcTextures.push_back(mysteryManTexture);
 
-		Npc mysteryMan(npcTextures[0], sf::Vector2f(325, 100), 1);
-
-		if (objective_beach.isDone() && objective_mountain.isDone() && objective_forest.isDone()) {
-			mysteryMan.addLine(" Ahh! You have found them all! Our creators name shall be \n revealed!");
-			mysteryMan.addLine(" Prepare to meet your fate!");
-			mysteryMan.setPosition(sf::Vector2f(325, 300));
-		} else {
-			mysteryMan.addLine(" Njee hee hee! I see you are a hero looking for the secret \n of the island. Well, come back when you found \n the three magical items. \n Huhuhu!");
-		}
-
-		npcs.push_back(mysteryMan);
+		// add the Mystery Man
+		npcs.push_back(new MysteryMan(sf::Vector2f(325, 100)));
 
 
 		// Set up doors to other worlds
@@ -673,7 +646,7 @@ void SceneManager::loadLevel(int level, sf::Vector2f position)
 
 
 		// put objectives in the world
-		if (objective_beach.isDone() && objective_mountain.isDone() && objective_forest.isDone()) {
+		if (GLOBAL_objective_beach_done && GLOBAL_objective_mountain_done && GLOBAL_objective_forest_done) {
 			portal.setPosition(325, 125);
 		}
 
@@ -737,7 +710,7 @@ void SceneManager::update(float elapsedTime)
 
 		// update NPCs for movement and animation
 		for (unsigned int i = 0; i < npcs.size(); i++)
-			npcs[i].update(elapsedTime);
+			npcs[i]->update(elapsedTime);
 
 
 		// update the hero for movement and animation
@@ -745,14 +718,24 @@ void SceneManager::update(float elapsedTime)
 			hero.update(elapsedTime, environment, npcs, enemies, ui);
 
 
+		// setting the global objectives
+		if (objective_beach.isDone())
+			GLOBAL_objective_beach_done = true;
+
+		if (objective_mountain.isDone())
+			GLOBAL_objective_mountain_done = true;
+
+		if (objective_forest.isDone())
+			GLOBAL_objective_forest_done = true;
+
 		// update objectives for movement and animation
-		if (!objective_beach.isDone())
+		if (!GLOBAL_objective_beach_done)
 			objective_beach.update(elapsedTime, hero.getBoundingBox());
 
-		if (!objective_mountain.isDone())
+		if (!GLOBAL_objective_mountain_done)
 			objective_mountain.update(elapsedTime, hero.getBoundingBox());
 
-		if (!objective_forest.isDone())
+		if (!GLOBAL_objective_forest_done)
 			objective_forest.update(elapsedTime, hero.getBoundingBox());
 
 		portal.update(elapsedTime, hero.getBoundingBox());
@@ -766,6 +749,7 @@ void SceneManager::update(float elapsedTime)
 
 
 	} else {
+
 
 		// play the credits
 		if (!playingCredits)

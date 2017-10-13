@@ -3,14 +3,10 @@
 
 
 /*
-* CONSTRUCTOR - in here we create our NPC by passing it a texture and setting its basic variables
+* CONSTRUCTOR - in here we create our NPC and set its basic variables. The default NPC texture is a signpost. Child-objects will overwrite it with their own texture.
 */
-Npc::Npc(sf::Texture& texture, sf::Vector2f position, int numberOfFrames)
+Npc::Npc(sf::Vector2f position)
 {
-	// set texture and animation
-	sprite.setTexture(texture);
-	animation.setTexture(texture, sf::Vector2u(numberOfFrames, 1), 0.8f);
-
 	// set the position
 	setPosition(position);
 }
@@ -47,18 +43,51 @@ sf::FloatRect Npc::getBoundingBox()
 
 
 /*
-* GET LINE - return the requested line of dialogue
+* GET OPENING LINE - returns the opening line
 */
-std::string Npc::nextLine()
+std::string Npc::getOpeningLine()
 {
-	std::string line = lines[currentLine];
+	return openingLine;
+}
 
-	if (currentLine >= lines.size() - 1)
-		currentLine = 0;
-	else
-		currentLine++;
 
-	return line;
+
+/*
+* GET LINE AT - returns the requested line of dialogue
+*/
+std::string Npc::getLineAt(int linePosition)
+{
+	return lines.at(linePosition);
+}
+
+
+
+/*
+* OFFERS DIALOGUE OPTIONS - returns true if the NPC has dialogue options
+*/
+bool Npc::offersDialogueOptions()
+{
+	return hasDialogueOptions;
+}
+
+
+
+/*
+* GET DIALOGUE OPTIONS
+*/
+std::vector<std::string> Npc::getDialogueOptions()
+{
+	return dialogueOptions;
+}
+
+
+
+/*
+* SET OPENING LINE - set the opening line for this NPC
+*/
+void Npc::setOpeningLine(std::string line)
+{
+	openingLine = line;
 }
 
 
@@ -74,11 +103,39 @@ void Npc::addLine(std::string line)
 
 
 /*
+* ADD DIALOGUE OPTION - add a dialogue option to our NPC
+*/
+void Npc::addDialogueOption(std::string line)
+{
+	dialogueOptions.push_back(line);
+}
+
+
+
+/*
+* VIRTUAL - BUILD DIALOGUE - build the dialogue for our NPC accoring to the dialogue ID
+*/
+void Npc::buildDialogue(std::string dialogueID)
+{
+}
+
+
+
+/*
 * SET POSITION - set a new postion for the NPC
 */
 void Npc::setPosition(sf::Vector2f position)
 {
 	sprite.setPosition(position);
+}
+
+
+
+/*
+* VIRTUAL - MEET NPC - set the global variable for this NPC
+*/
+void Npc::meetNpc()
+{
 }
 
 

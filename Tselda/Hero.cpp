@@ -37,6 +37,9 @@ Hero::Hero()
 	if (!buffer_interact.loadFromFile("Resources/Sound/Effects/interact.wav")) printf("ERROR loading INTERACT sound file!");
 	sound_interact.setBuffer(buffer_interact);
 
+	if (!buffer_dialogueSelect.loadFromFile("Resources/Sound/Effects/select_dialogue.wav")) printf("ERROR loading DIALOGUE SELECT sound file!");
+	sound_dialogueSelect.setBuffer(buffer_dialogueSelect);
+
 	// set the remaining variables
 	setDirection(DOWN);
 	setSpeed(200);
@@ -132,7 +135,7 @@ void Hero::setSpeed(float speed)
 /*
 * UPDATE - this is the meat of our hero object. In this function we decide, what our hero-object will do each cycle
 */
-void Hero::update(float deltaTime, std::vector<sf::Sprite>& environment, std::vector<Npc>& npcs, std::vector<Enemy>& enemies, UI& ui)
+void Hero::update(float deltaTime, std::vector<sf::Sprite>& environment, std::vector<Npc*> npcs, std::vector<Enemy>& enemies, UI& ui)
 {
 	sf::Vector2f movement(0.0f, 0.0f);
 	sf::FloatRect intersectionRect;
@@ -209,18 +212,18 @@ void Hero::update(float deltaTime, std::vector<sf::Sprite>& environment, std::ve
 
 	for (unsigned int i = 0; i < npcs.size(); i++) {
 
-		if (heroSprite.getGlobalBounds().intersects(npcs[i].getBoundingBox(), intersectionRect)) {
+		if (heroSprite.getGlobalBounds().intersects(npcs[i]->getBoundingBox(), intersectionRect)) {
 
 			// general movement restriction on x-axis
 			if (intersectionRect.width <= intersectionRect.height && intersectionRect.height > speed * deltaTime) {
 
 				// collision on the right
-				if (getPosition().x < npcs[i].getPosition().x && movement.x > 0) {
+				if (getPosition().x < npcs[i]->getPosition().x && movement.x > 0) {
 					movement.x = 0;
 				}
 
 				// collision on the left
-				if (getPosition().x > npcs[i].getPosition().x && movement.x < 0) {
+				if (getPosition().x > npcs[i]->getPosition().x && movement.x < 0) {
 					movement.x = 0;
 				}
 			}
@@ -229,12 +232,12 @@ void Hero::update(float deltaTime, std::vector<sf::Sprite>& environment, std::ve
 			if (intersectionRect.width > intersectionRect.height && intersectionRect.width > speed * deltaTime) {
 
 				// collision on the bottom
-				if (getPosition().y < npcs[i].getPosition().y && movement.y > 0) {
+				if (getPosition().y < npcs[i]->getPosition().y && movement.y > 0) {
 					movement.y = 0;
 				}
 
 				// collision on the top
-				if (getPosition().y > npcs[i].getPosition().y && movement.y < 0) {
+				if (getPosition().y > npcs[i]->getPosition().y && movement.y < 0) {
 					movement.y = 0;
 				}
 			}
@@ -242,25 +245,105 @@ void Hero::update(float deltaTime, std::vector<sf::Sprite>& environment, std::ve
 
 			// interacting with NPCs
 			bool isInteractButtonPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::E);
+			bool is_W_ButtonPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::W);
+			bool is_S_ButtonPressed = sf::Keyboard::isKeyPressed(sf::Keyboard::S);
 
-			if (isInteractButtonPressed && !wasInteractButtonPressed) {		// E key is pressed down after being released - we interact with npcs
 
-																			// not interacting, then interact
-				if (!interacting) {
-					ui.setDialogue(npcs[i].nextLine());
+			if (interacting) {
+
+				if (npcs[i]->offersDialogueOptions()) {		// if dialogue options are available, react to one of 3 inputs
+
+					ui.activateDialogueOptionsBox(true);
+					ui.setDialogueOptions(npcs[i]->getDialogueOptions());
+
+					// W key is pressed down after being released - move selection up
+					if (is_W_ButtonPressed && !was_W_Pressed)
+					{
+						// selection up
+						ui.arrowUp();
+						sound_dialogueSelect.play();
+					}
+
+					// S key is pressed down after being release - move selection down
+					if (is_S_ButtonPressed && !was_S_Pressed)
+					{
+						// selection down
+						ui.arrowDown();
+						sound_dialogueSelect.play();
+					}
+
+					// if the E key is pressed - select the dialogue option
+					if (isInteractButtonPressed && !wasInteractButtonPressed)
+					{
+						sound_interact.play();
+						int selectedOption = ui.getArrowPosition();
+
+						// if the player chooses "leave" clean up and close the dialogue box
+						if (npcs[i]->getDialogueOptions().at(selectedOption) == "- Leave -")
+						{
+							ui.setDialogue("");
+							ui.activateDialogueBox(false);
+							ui.activateDialogueOptionsBox(false);
+							interacting = false;
+						}
+						else	// if the player chooses an answer rebuild the dialogue accordingly
+						{
+							ui.setDialogue(npcs[i]->getLineAt(selectedOption));
+
+							npcs[i]->buildDialogue(npcs[i]->getDialogueOptions().at(selectedOption));
+							ui.setDialogueOptions(npcs[i]->getDialogueOptions());
+						}
+
+						/*
+						// get the next line
+						std::string nextLine = npcs[i]->nextLine();
+
+						// check if we reached the end of the dialogue to end the talk
+						if (nextLine == "_MARKER_end_of_dialogue")
+						{
+							npcs[i]->resetLine();
+							ui.setDialogue("");
+							ui.activateDialogueBox(false);
+							ui.activateDialogueOptionsBox(false);
+							interacting = false;
+						}
+						else
+						{		// if not then just show the next line
+							ui.setDialogue(nextLine);
+							sound_interact.play();
+						}*/
+					}
+				}		
+				else										// if no dialogue options are available, just proceed with 'E'
+				{
+					// if the E key is pressed
+					if (isInteractButtonPressed && !wasInteractButtonPressed)
+					{
+						ui.setDialogue("");
+						ui.activateDialogueBox(false);
+						interacting = false;
+					}
+				}
+			}
+			else
+			{
+				// if not interacting and E Button is pressed -> start interacting
+				if (isInteractButtonPressed && !wasInteractButtonPressed) {
+
+					npcs[i]->buildDialogue("");
+					ui.setDialogue(npcs[i]->getOpeningLine());
 					ui.activateDialogueBox(true);
 					sound_interact.play();
-				}
-				else {
-					ui.setDialogue("");
-					ui.activateDialogueBox(false);
-				}
 
-				// reverse the interaction-status
-				interacting = !interacting;
+					interacting = true;
+					npcs[i]->meetNpc();
+				}
 			}
 
+
 			wasInteractButtonPressed = isInteractButtonPressed;
+			was_W_Pressed = is_W_ButtonPressed;
+			was_S_Pressed = is_S_ButtonPressed;
 		}
 	}
 
